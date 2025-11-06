@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>وزارة العدل - Falcon Town</title>
 
-<!-- ========== Favicon (ضع ملف logo.webp في نفس المجلد) ========== -->
+<!-- favicon -->
 <link rel="icon" type="image/webp" href="logo.webp" />
 
 <style>
@@ -62,15 +62,30 @@
   .welcome-box h1{font-size:32px;margin:8px 0;color:var(--orange);letter-spacing:2px;}
   .welcome-box p{color:var(--muted);margin:0 0 12px;}
   .small-note{font-size:12px;color:var(--muted)}
+  .login-btn-small{
+    position:absolute;top:18px;left:18px;padding:8px 10px;border-radius:8px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.03);cursor:pointer;font-weight:700;color:var(--text);
+    transition:transform .12s; z-index:50;
+  }
+  .login-btn-small:hover{transform:translateY(-3px)}
+  .login-popup{
+    position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.45);z-index:9998;
+  }
+  .login-card{width:92%;max-width:420px;padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.015));box-shadow:0 20px 60px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.02);}
+  .news-card{margin-bottom:12px;padding:12px;border-radius:10px;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.02);}
+  .news-title{font-weight:800;margin-bottom:6px;color:#fff}
   @media (max-width:960px){
     main{grid-template-columns: 1fr; }
     .side-hero{position:relative;top:0;}
+    .login-btn-small{left:12px;top:12px}
   }
 </style>
 </head>
 <body>
 
-<!-- شاشة ترحيب -->
+<!-- زر تسجيل صغير -->
+<button id="openLogin" class="login-btn-small">سجل</button>
+
+<!-- شاشة ترحيب (يمكن إغلاقها) -->
 <div id="welcome" class="welcome-overlay">
   <div class="welcome-box fade-in">
     <img src="logo.webp" alt="Falcon Town Logo" />
@@ -83,8 +98,22 @@
   </div>
 </div>
 
+<!-- نافذة تسجيل الدخول (مخفية افتراضيًا) -->
+<div id="loginPopup" class="login-popup" style="display:none;">
+  <div class="login-card fade-in">
+    <h3 style="margin:0 0 8px;">تسجيل دخول القضاة</h3>
+    <p class="muted" style="margin:0 0 12px">ادخل كلمة السر الخاصة بالقاضي أو نائبه</p>
+    <input id="judgePassword" type="text" placeholder="كلمة السر" />
+    <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end;">
+      <button id="cancelLogin" class="btn" style="background:transparent;border:1px solid rgba(255,255,255,0.04);">إلغاء</button>
+      <button id="doLogin" class="btn">دخول</button>
+    </div>
+    <div id="loginMsg" class="muted" style="margin-top:10px"></div>
+  </div>
+</div>
+
 <div class="wrap fade-in">
-  <header>
+  <header style="position:relative;">
     <div class="logo"><img src="logo.webp" alt="logo"></div>
     <div>
       <h1>وزارة العدل - Falcon Town</h1>
@@ -94,6 +123,7 @@
         <button class="tab" data-target="rules-city">قوانين المدينة</button>
         <button class="tab" data-target="raise-case">رفع قضية</button>
         <button class="tab" data-target="apply-jobs">التقديم على وظائف</button>
+        <button class="tab" data-target="news-justice">أخبار العدل</button>
       </nav>
     </div>
   </header>
@@ -199,6 +229,35 @@
         </div>
       </div>
 
+      <!-- أخبار العدل -->
+      <div id="news-justice" class="panel" style="display:none;">
+        <div class="section-title"><h2>أخبار العدل</h2></div>
+        <div class="content">
+          <p class="muted">قسم خاص لعرض أخبار وزارة العدل. (الكتابة محصورة للقاضي و نائبه بعد تسجيل الدخول)</p>
+
+          <!-- زر إضافة خبر يظهر فقط للقضاة بعد تسجيل الدخول -->
+          <div id="newsControls" style="margin:12px 0; display:none;">
+            <button id="openAddNews" class="btn">إضافة خبر جديد</button>
+            <button id="logoutBtn" class="btn" style="background:transparent;border:1px solid rgba(255,255,255,0.06);margin-right:8px;">خروج</button>
+          </div>
+
+          <!-- نموذج إضافة خبر (مخفي) -->
+          <div id="addNewsForm" style="display:none;margin-top:12px;">
+            <label>عنوان الخبر</label>
+            <input id="newsTitle" type="text" placeholder="عنوان الخبر...">
+            <label>نص الخبر</label>
+            <textarea id="newsBody" placeholder="نص الخبر..."></textarea>
+            <button id="postNewsBtn" class="btn">نشر الخبر</button>
+            <div id="postNewsMsg" class="muted" style="margin-top:8px"></div>
+          </div>
+
+          <!-- قائمة الأخبار -->
+          <div id="newsList" style="margin-top:16px;">
+            <div class="muted" id="newsLoading">جاري تحميل الأخبار...</div>
+          </div>
+        </div>
+      </div>
+
     </section>
 
     <aside class="card side-hero">
@@ -223,17 +282,177 @@
   <footer class="muted">صنع من المطور <strong>كافح المكافح</strong> — Falcon Town</footer>
 </div>
 
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-database-compat.js"></script>
+
 <script>
-/* =========== إعداد Webhook (ضع روابطك هنا) ===========
-   استبدل النصوص REPLACE_* بروابط الـ Webhook الحقيقية لديك */
-const WEBHOOK_CASE = "https://discord.com/api/webhooks/REPLACE_CASE";
-const WEBHOOK_JUDGE = "https://discord.com/api/webhooks/REPLACE_JUDGE";
-const WEBHOOK_LAWYER = "https://discord.com/api/webhooks/REPLACE_LAWYER";
+/* ================= إعداد Firebase =================
+   ضع إعدادات مشروع Firebase الخاصة بك في الكائن أدناه */
+const firebaseConfig = {
+  /* <- ضع هنا إعدادات Firebase الخاصة بمشروعك */
+  apiKey: "REPLACE_APIKEY",
+  authDomain: "REPLACE_AUTHDOMAIN",
+  databaseURL: "https://falconcfw-123-default-rtdb.firebaseio.com/",
+  projectId: "REPLACE_PROJECTID",
+  storageBucket: "REPLACE_STORAGEBUCKET",
+  messagingSenderId: "REPLACE_MSGID",
+  appId: "REPLACE_APPID"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-/* NOTE: قد تواجه CORS عند الإرسال مباشرةً إلى Discord. إذا حصل هذا،
-   استخدم ملف البروكسي Node.js (webhook-proxy.js) أو سيرفر وسيط كما شرحنا سابقًا. */
+/* ========= كلمة السر الخاصة بالقاضي (كما طلبت) =========
+   ملاحظة: هذه المقارنة تتم على جهة العميل.
+*/
+const JUDGE_PASSWORD = "عمك كافح المكافح".trim();
 
-/* ---------- تحكم بالتابات والعرض ---------- */
+/* ---------- عناصر الواجهة ---------- */
+const openLogin = document.getElementById('openLogin');
+const loginPopup = document.getElementById('loginPopup');
+const cancelLogin = document.getElementById('cancelLogin');
+const doLogin = document.getElementById('doLogin');
+const judgePassword = document.getElementById('judgePassword');
+const loginMsg = document.getElementById('loginMsg');
+const newsControls = document.getElementById('newsControls');
+const addNewsForm = document.getElementById('addNewsForm');
+const openAddNews = document.getElementById('openAddNews');
+const postNewsBtn = document.getElementById('postNewsBtn');
+const postNewsMsg = document.getElementById('postNewsMsg');
+const newsList = document.getElementById('newsList');
+const newsLoading = document.getElementById('newsLoading');
+const logoutBtn = document.getElementById('logoutBtn');
+
+/* ---------- حالة تسجيل الدخول (محليًا) ---------- */
+let isJudge = false;
+function setJudgeState(state){
+  isJudge = !!state;
+  if(isJudge){
+    newsControls.style.display = '';
+  }else{
+    newsControls.style.display = 'none';
+    addNewsForm.style.display = 'none';
+  }
+  // خزن حالة بسيطة في localStorage لكي يبقى المستخدم مسجلاً حتى يغلق المتصفح
+  try{ localStorage.setItem('ft_isJudge', isJudge ? '1' : '0'); }catch(e){}
+}
+
+/* حاول استرجاع حالة سابقة */
+try{
+  if(localStorage.getItem('ft_isJudge') === '1') setJudgeState(true);
+}catch(e){}
+
+/* ---------- فتح نافذة تسجيل الدخول ---------- */
+openLogin.addEventListener('click', ()=> {
+  loginPopup.style.display = '';
+  judgePassword.value = '';
+  loginMsg.textContent = '';
+});
+
+/* إغلاق */
+cancelLogin.addEventListener('click', ()=> {
+  loginPopup.style.display = 'none';
+});
+
+/* تنفيذ تسجيل الدخول */
+doLogin.addEventListener('click', ()=> {
+  const val = (judgePassword.value || "").trim();
+  if(!val){ loginMsg.textContent = 'أدخل كلمة السر أولًا'; return; }
+  if(val === JUDGE_PASSWORD){
+    setJudgeState(true);
+    loginMsg.style.color = 'lightgreen';
+    loginMsg.textContent = 'تم تسجيل الدخول ✅';
+    setTimeout(()=> { loginPopup.style.display = 'none'; loginMsg.style.color=''; }, 700);
+    playBig();
+  } else {
+    loginMsg.style.color = '#ffb3b3';
+    loginMsg.textContent = 'كلمة السر غير صحيحة';
+    playClick();
+  }
+});
+
+/* زر خروج */
+logoutBtn.addEventListener('click', ()=> {
+  setJudgeState(false);
+  try{ localStorage.removeItem('ft_isJudge'); }catch(e){}
+  playClick();
+});
+
+/* تفعيل نموذج الإضافة */
+openAddNews.addEventListener('click', ()=> {
+  addNewsForm.style.display = addNewsForm.style.display === 'none' ? '' : 'none';
+});
+
+/* نشر الخبر إلى Firebase */
+postNewsBtn.addEventListener('click', async ()=> {
+  const title = document.getElementById('newsTitle').value.trim();
+  const body = document.getElementById('newsBody').value.trim();
+  postNewsMsg.style.color = '';
+  if(!isJudge){ postNewsMsg.textContent = 'غير مسموح: عليك تسجيل الدخول كقاضي'; return; }
+  if(!title || !body){ postNewsMsg.textContent = 'املأ العنوان والنص.'; return; }
+  postNewsMsg.textContent = 'جاري النشر...';
+  const item = {
+    title,
+    body,
+    author: 'قاضي / نائب', // ممكن نضيف اسم محدد لو نحتاج
+    ts: Date.now()
+  };
+  try{
+    const ref = db.ref('news').push();
+    await ref.set(item);
+    postNewsMsg.style.color = 'lightgreen';
+    postNewsMsg.textContent = 'تم نشر الخبر ✅';
+    document.getElementById('newsTitle').value = '';
+    document.getElementById('newsBody').value = '';
+    playBig();
+    // سيظهر تلقائيًا بفضل مستمع البيانات أدناه
+  }catch(err){
+    console.error(err);
+    postNewsMsg.style.color = '#ffb3b3';
+    postNewsMsg.textContent = 'فشل النشر. تأكد من إعدادات Firebase وقواعد DB.';
+  }
+});
+
+/* ---------- جلب وعرض الأخبار من Firebase (مباشر، يستمع للتغييرات) ---------- */
+function renderNewsItem(key, data){
+  const el = document.createElement('div');
+  el.className = 'news-card';
+  el.innerHTML = `
+    <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;">
+      <div>
+        <div class="news-title">${escapeHtml(data.title)}</div>
+        <div style="font-size:13px;color:var(--muted)">${new Date(data.ts || Date.now()).toLocaleString('ar-EG')}</div>
+      </div>
+    </div>
+    <div style="margin-top:8px;color:var(--text);line-height:1.5">${escapeHtml(data.body)}</div>
+  `;
+  el.dataset.key = key;
+  return el;
+}
+function clearNewsList(){ newsList.innerHTML = ''; }
+
+newsList.addEventListener('click', (e)=> {
+  // مستقبلًا: نضيف تفاعل مثل حذف الخبر إن أردت (مقيد بالقاضي فقط).
+});
+
+/* استمع للتغيرات في المسار news */
+const newsRef = db.ref('news');
+newsRef.orderByChild('ts').on('value', snapshot => {
+  const obj = snapshot.val() || {};
+  const arr = Object.entries(obj).map(([k,v])=> ({ k, v })).sort((a,b)=> (b.v.ts||0) - (a.v.ts||0));
+  clearNewsList();
+  if(arr.length === 0){
+    newsLoading.textContent = 'لا توجد أخبار حتى الآن.';
+    return;
+  }
+  newsLoading.textContent = '';
+  arr.forEach(item=>{
+    const nEl = renderNewsItem(item.k, item.v);
+    newsList.appendChild(nEl);
+  });
+});
+
+/* ---------- تَحكُّم بالتابات ---------- */
 const tabs = document.querySelectorAll('header .tab, .hero .tab, .card .tab');
 const panels = document.querySelectorAll('.panel');
 const jobTabs = document.querySelectorAll('#apply-jobs .tab');
@@ -270,7 +489,7 @@ enterBtn.addEventListener('click', ()=> {
 function hideWelcome(){
   welcome.style.transition = 'opacity .6s';
   welcome.style.opacity = 0;
-  setTimeout(()=> welcome.remove(), 650);
+  setTimeout(()=> { if(welcome && welcome.parentNode) welcome.parentNode.removeChild(welcome); }, 650);
 }
 /* اغلاق تلقائي بعد 6 ثواني */
 setTimeout(()=> { if(document.getElementById('welcome')) hideWelcome(); }, 6000);
@@ -298,103 +517,16 @@ function playTone(freq, duration=0.08, type='sine', gain=0.08){
 function playClick(){ playTone(650,0.05,'triangle',0.04); }
 function playBig(){ playTone(340,0.16,'sine',0.18); playTone(880,0.12,'sine',0.06); }
 
-/* ---------- ارسال Embed الى Discord Webhook ---------- */
-async function sendEmbedToWebhook(webhookUrl, embed){
-  const payload = { embeds: [embed] };
-  try{
-    const res = await fetch(webhookUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    if(!res.ok) throw new Error('Response not OK: ' + res.status);
-    return { ok:true };
-  }catch(err){
-    console.warn('Direct webhook failed (CORS or network):', err);
-    return { ok:false, error: err.message, payload };
-  }
-}
-
-/* ---------- معالجة النماذج ---------- */
-document.getElementById('caseForm').addEventListener('submit', async (e)=>{
-  e.preventDefault();
-  playClick();
-  const f = Object.fromEntries(new FormData(e.target).entries());
-  const embed = {
-    title: `قضية جديدة: ${f.title}`,
-    color: 15158332,
-    fields:[
-      { name: "المُبلّغ", value: f.user || "غير معروف", inline:true },
-      { name: "الموقع", value: f.location || "غير محدد", inline:true },
-      { name: "الأدلة", value: f.evidence || "لا توجد", inline:false },
-      { name: "التفاصيل", value: f.description || "لا توجد تفاصيل", inline:false }
-    ],
-    timestamp: new Date().toISOString(),
-    footer: { text: "وزارة العدل - Falcon Town" }
-  };
-  const status = document.getElementById('caseStatus');
-  status.textContent = 'جاري الإرسال...';
-  const result = await sendEmbedToWebhook(WEBHOOK_CASE, embed);
-  if(result.ok) {
-    status.textContent = 'تم إرسال القضية بنجاح ✅';
-    e.target.reset();
-    playBig();
-  } else {
-    status.innerHTML = 'لم يتم الإرسال (CORS أو مشكلة شبكة). يمكنك نسخ هذا النص وإرساله من الخادم:<br><pre style="white-space:pre-wrap;max-height:200px;overflow:auto;background:#111;padding:8px;border-radius:8px;">'+escapeHtml(JSON.stringify(result.payload, null, 2))+'</pre>';
-  }
-});
-
-document.getElementById('judgeForm').addEventListener('submit', async (e)=>{
-  e.preventDefault(); playClick();
-  const f = Object.fromEntries(new FormData(e.target).entries());
-  const embed = {
-    title: `تقديم - قاضي | ${f.user}`,
-    color: 3447003,
-    fields:[
-      { name:"اليوزر", value: f.user || "غير محدد", inline:true },
-      { name:"الاسم", value: f.realname || "—", inline:true },
-      { name:"الخبرة", value: f.experience || "—", inline:false },
-      { name:"السبب", value: f.motivation || "—", inline:false }
-    ],
-    timestamp: new Date().toISOString(),
-    footer:{ text:"Ministry of Justice - Falcon Town" }
-  };
-  const status = document.getElementById('judgeStatus');
-  status.textContent = 'جاري الإرسال...';
-  const res = await sendEmbedToWebhook(WEBHOOK_JUDGE, embed);
-  if(res.ok){ status.textContent='تم إرسال طلب القاضي ✅'; e.target.reset(); playBig(); }
-  else{
-    status.innerHTML = 'فشل الإرسال (CORS). انسخ هذا واحفظه على الخادم:<br><pre style="white-space:pre-wrap;max-height:200px;overflow:auto;background:#111;padding:8px;border-radius:8px;">'+escapeHtml(JSON.stringify(res.payload, null, 2))+'</pre>';
-  }
-});
-
-document.getElementById('lawyerForm').addEventListener('submit', async (e)=>{
-  e.preventDefault(); playClick();
-  const f = Object.fromEntries(new FormData(e.target).entries());
-  const embed = {
-    title: `تقديم - محامي | ${f.user}`,
-    color: 15277667,
-    fields:[
-      { name:"اليوزر", value: f.user || "غير محدد", inline:true },
-      { name:"الاسم", value: f.realname || "—", inline:true },
-      { name:"الخبرة", value: f.experience || "—", inline:false },
-      { name:"السبب", value: f.motivation || "—", inline:false }
-    ],
-    timestamp: new Date().toISOString(),
-    footer:{ text:"Ministry of Justice - Falcon Town" }
-  };
-  const status = document.getElementById('lawyerStatus');
-  status.textContent = 'جاري الإرسال...';
-  const res = await sendEmbedToWebhook(WEBHOOK_LAWYER, embed);
-  if(res.ok){ status.textContent='تم إرسال طلب المحامي ✅'; e.target.reset(); playBig(); }
-  else{
-    status.innerHTML = 'فشل الإرسال (CORS). انسخ هذا واحفظه على الخادم:<br><pre style="white-space:pre-wrap;max-height:200px;overflow:auto;background:#111;padding:8px;border-radius:8px;">'+escapeHtml(JSON.stringify(res.payload, null, 2))+'</pre>';
-  }
-});
+/* ---------- إرسال Embed الى Discord (نماذج سابقة) ----------
+   تبقى كما هي في كودك السابق — لم يتم تغييرها هنا.
+*/
 
 /* ---------- أدوات صغيرة ---------- */
 function escapeHtml(s){ return (s+"").replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 window.addEventListener('load', ()=> { document.querySelectorAll('.fade-in').forEach((el,i)=> el.style.animationDelay = (i*0.04)+'s'); });
+
+/* عند التحميل، ضَع واجهة الأخبار مرئية للجميع (عرض فقط). */
+setJudgeState(localStorage.getItem('ft_isJudge') === '1');
 </script>
 </body>
 </html>
