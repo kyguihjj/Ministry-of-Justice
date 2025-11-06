@@ -264,9 +264,9 @@
       <div class="section-title"><h2>معلومات سريعة</h2></div>
       <p class="muted">روابط هامة وإشعارات</p>
       <ul class="rules-list" style="margin-top:12px">
-        <li>?? إجراءات الاستئناف: يمكنك الاستئناف خلال 72 ساعة من صدور الحكم.</li>
-        <li>?? ساعات العمل: 08:00 - 20:00 (وقت السيرفر).</li>
-        <li>?? للتواصل الطارئ: تواصل مع فريق الإدارة داخل Discord.</li>
+        <li>📜 إجراءات الاستئناف: يمكنك الاستئناف خلال 72 ساعة من صدور الحكم.</li>
+        <li>🕘 ساعات العمل: 08:00 - 20:00 (وقت السيرفر).</li>
+        <li>📢 للتواصل الطارئ: تواصل مع فريق الإدارة داخل Discord.</li>
       </ul>
 
       <div style="margin-top:18px;">
@@ -361,7 +361,7 @@ doLogin.addEventListener('click', ()=> {
   if(val === JUDGE_PASSWORD){
     setJudgeState(true);
     loginMsg.style.color = 'lightgreen';
-    loginMsg.textContent = 'تم تسجيل الدخول ?';
+    loginMsg.textContent = 'تم تسجيل الدخول ✅';
     setTimeout(()=> { loginPopup.style.display = 'none'; loginMsg.style.color=''; }, 700);
     playBig();
   } else {
@@ -401,7 +401,7 @@ postNewsBtn.addEventListener('click', async ()=> {
     const ref = db.ref('news').push();
     await ref.set(item);
     postNewsMsg.style.color = 'lightgreen';
-    postNewsMsg.textContent = 'تم نشر الخبر ?';
+    postNewsMsg.textContent = 'تم نشر الخبر ✅';
     document.getElementById('newsTitle').value = '';
     document.getElementById('newsBody').value = '';
     playBig();
