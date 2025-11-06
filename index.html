@@ -255,6 +255,241 @@ const WEBHOOK_LAWYER = "https://discord.com/api/webhooks/1436075887073431563/hZR
 /* ========= Proxy لتجاوز CORS (CORS-Anywhere) ========= */
 const PROXY = "https://cors-anywhere.herokuapp.com/";
 
+/* ========= sound: small effects (معطلة مؤقتاً لضمان عمل الواجهة) ========= */
+let audioEnabled = false; 
+const soundToggle = document.getElementById('soundToggle');
+if(soundToggle) soundToggle.addEventListener('change', e=> audioEnabled = e.target.checked);
+
+// تم تفريغ دوال الأصوات لمنع الأخطاء في المتصفحات المحلية
+function playTone(freq, duration=0.07, type='sine', gain=0.07){}
+function microClick(){ playTone(720,0.04,'triangle',0.04) }
+function bigTone(){ playTone(320,0.18,'sine',0.18); playTone(880,0.12,'sine',0.06); }
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    /* ========= واجهة وتبويبات ========= */
+    const tabs = document.querySelectorAll('header .tab');
+    tabs.forEach(t=>{
+      t.addEventListener('click', ()=>{
+        tabs.forEach(x=>x.classList.remove('active'));
+        t.classList.add('active');
+        const target = t.dataset.target;
+        document.querySelectorAll('#content-area .panel').forEach(p=> p.style.display = (p.id===target ? '' : 'none'));
+        microClick();
+      });
+    });
+
+    /* job tabs */
+    document.querySelectorAll('.job-tab').forEach(j=>{
+      j.addEventListener('click', ()=>{
+        document.querySelectorAll('.job-tab').forEach(x=>x.classList.remove('active'));
+        j.classList.add('active');
+        const t = j.dataset.target;
+        document.querySelectorAll('.job-panel').forEach(p=> p.style.display = (p.id===t ? '' : 'none'));
+        microClick();
+      });
+    });
+
+    /* ========= Welcome overlay behavior (تم التصحيح والتحقق) ========= */
+    const welcome = document.getElementById('welcome');
+    const enterBtn = document.getElementById('enterBtn'); 
+
+    if(enterBtn && welcome){
+        enterBtn.addEventListener('click', ()=>{
+            welcome.style.transition = 'opacity .6s ease-out, transform .6s ease-out';
+            welcome.style.opacity = 0;
+            welcome.style.transform = 'translateY(-20px)';
+            
+            setTimeout(()=> {
+                welcome.remove(); 
+            }, 600); 
+
+            bigTone();
+        });
+    }
+
+    // الاختفاء التلقائي 
+    setTimeout(()=>{ 
+      if(document.getElementById('welcome')) { 
+        document.getElementById('welcome').style.transition = 'opacity .6s ease-out';
+        document.getElementById('welcome').style.opacity=0; 
+        setTimeout(()=>document.getElementById('welcome').remove(),600) 
+      } 
+    }, 7000);
+    
+    /* ========= little UI polish on load ========= */
+    document.querySelectorAll('.float-in').forEach((el,i)=> el.style.animationDelay = (i*0.06)+'s');
+    document.querySelectorAll('.particle').forEach((p,i)=> p.style.animationDelay = (Math.random()*4)+'s');
+
+    /* ========= Accessibility: keyboard support for tabs ========= */
+    document.querySelectorAll('header .tab').forEach(btn=>{
+      btn.addEventListener('keyup', (e)=> { if(e.key === 'Enter' || e.key === ' ') btn.click(); });
+    });
+    document.querySelectorAll('.job-tab').forEach(btn=>{
+      btn.addEventListener('keyup', (e)=> { if(e.key === 'Enter' || e.key === ' ') btn.click(); });
+    });
+}); 
+
+/* ========= helper for escaping HTML in errors ========= */
+function escapeHtml(s){ return (s+"").replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ========= send embed via proxy (مع حل البروكسي) ========= */
+async function sendEmbedToWebhook(webhookUrl, embed, statusEl){
+  statusEl.textContent = "جاري الإرسال...";
+  const endpoint = PROXY + webhookUrl; 
+
+  try{
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({embeds:[embed]})
+    });
+    
+    if(!res.ok){
+      let errorBody = await res.text();
+      // محاولة استخلاص رسالة خطأ مناسبة للمستخدم
+      let hint = (errorBody.includes('Request header field Content-Type is not allowed by Access-Control-Allow-Headers in preflight response')) ? 
+                 'قد تحتاج لزيارة صفحة البروكسي (cors-anywhere) والضغط على "Request access" أولاً.' : 
+                 `خطأ: ${res.status}. راجع الـ Webhook.`;
+      
+      throw new Error(hint);
+    }
+
+    statusEl.textContent = "تم الإرسال بنجاح ✅";
+    return {ok:true};
+
+  }catch(err){
+    console.warn('Webhook send failed:', err);
+    statusEl.innerHTML = 'فشل الإرسال. ' + err.message;
+    return {ok:false, error: err.message};
+  }
+}
+
+/* ========= Form handlers ========= */
+document.getElementById('caseForm').addEventListener('submit', async (e)=>{
+  e.preventDefault(); microClick();
+  const f = Object.fromEntries(new FormData(e.target).entries());
+  const embed = {
+    title: `قضية جديدة — ${f.title || 'بدون عنوان'}`,
+    color: 15158332,
+    fields: [
+      { name: "المُبلّغ", value: f.user || "غير معروف", inline: true },
+      { name: "الموقع", value: f.location || "غير محدد", inline: true },
+      { name: "الأدلة", value: f.evidence || "لا توجد", inline:false },
+      { name: "التفاصيل", value: f.description || "لا توجد تفاصيل", inline:false }
+    ],
+    timestamp: new Date().toISOString(),
+    footer: { text: "وزارة العدل - Falcon Town" }
+  };
+  const status = document.getElementById('caseStatus');
+  const result = await sendEmbedToWebhook(WEBHOOK_CASE, embed, status);
+  if(result.ok){ e.target.reset(); bigTone(); }
+});
+
+document.getElementById('judgeForm').addEventListener('submit', async (e)=>{
+  e.preventDefault(); microClick();
+  const f = Object.fromEntries(new FormData(e.target).entries());
+  const embed = {
+    title: `تقديم — قاضي | ${f.user || '—'}`,
+    color: 3447003,
+    fields:[
+      { name: "اليوزر", value: f.user || "—", inline:true },
+      { name: "الاسم", value: f.realname || "—", inline:true },
+      { name: "الخبرة", value: f.experience || "—", inline:false },
+      { name: "السبب", value: f.motivation || "—", inline:false }
+    ],
+    timestamp: new Date().toISOString(),
+    footer: { text: "وزارة العدل - Falcon Town" }
+  }n" placeholder="مثال: شارع السوق">
+
+          <button class="btn" type="submit">رفع القضية</button>
+          <div id="caseStatus" class="muted" style="margin-top:10px"></div>
+        </form>
+      </div>
+
+      <div id="apply" class="panel" style="display:none">
+        <h2 class="underline">التقديم على وظائف</h2>
+        <p class="muted">اختر الوظيفة وعبئ النموذج</p>
+
+        <div class="tabs-row" style="margin-top:12px">
+          <button class="tab job-tab active" data-target="judgePanel">تقديم - قاضي</button>
+          <button class="tab job-tab" data-target="lawyerPanel">تقديم - محامي</button>
+        </div>
+
+        <div id="judgePanel" class="job-panel" style="margin-top:10px">
+          <form id="judgeForm">
+            <label>يوزر ديسكورد</label>
+            <input type="text" name="user" required>
+            <label>الاسم (اختياري)</label>
+            <input type="text" name="realname">
+            <label>الخبرة</label>
+            <textarea name="experience" required></textarea>
+            <label>لماذا تريد أن تكون قاضيًا؟</label>
+            <textarea name="motivation" required></textarea>
+            <button class="btn" type="submit">إرسال طلب القاضي</button>
+            <div id="judgeStatus" class="muted" style="margin-top:10px"></div>
+          </form>
+        </div>
+
+        <div id="lawyerPanel" class="job-panel" style="display:none;margin-top:10px">
+          <form id="lawyerForm">
+            <label>يوزر ديسكورد</label>
+            <input type="text" name="user" required>
+            <label>الاسم (اختياري)</label>
+            <input type="text" name="realname">
+            <label>الخبرة</label>
+            <textarea name="experience" required></textarea>
+            <label>لماذا تريد أن تكون محاميًا؟</label>
+            <textarea name="motivation" required></textarea>
+            <button class="btn" type="submit">إرسال طلب المحامي</button>
+            <div id="lawyerStatus" class="muted" style="margin-top:10px"></div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <aside class="card side-hero float-in" style="padding:18px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h3 style="margin:0">معلومات سريعة</h3>
+        <div style="font-size:12px;color:var(--muted)">Falcon Town</div>
+      </div>
+      <p class="muted" style="margin-top:8px">روابط هامة وإشعارات</p>
+      <ul class="rules-list" style="margin-top:12px">
+        <li>📜 الاستئناف متاح خلال 72 ساعة.</li>
+        <li>🕘 ساعات العمل: 08:00 - 20:00 (وقت السيرفر).</li>
+        <li>📢 للتواصل الطارئ: تواصل عبر قناة الإدارة بالديسكورد.</li>
+      </ul>
+
+      <div style="margin-top:16px">
+        <h4 style="margin:0 0 8px">أصوات ومؤثرات</h4>
+        <label style="display:flex;align-items:center;gap:8px;margin-top:8px;color:var(--muted)">
+          تشغيل الأصوات
+          <input id="soundToggle" type="checkbox" checked style="transform:scale(1.1)">
+        </label>
+      </div>
+
+      <div style="margin-top:18px">
+        <h4 style="margin:0 0 8px">روابط سريعة</h4>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+          <a class="btn" href="#" onclick="alert('فتح قناة الديسكورد')" style="text-decoration:none">الدخول للديسكورد</a>
+          <a class="btn" href="#" onclick="alert('قوانين السيرفر')" style="text-decoration:none">قوانين السيرفر</a>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <footer>صنع من المطور <strong>كافح المكافح</strong> — Falcon Town</footer>
+</div>
+
+<script>
+/* ========= إعداد Webhooks ========= */
+const WEBHOOK_CASE   = "https://discord.com/api/webhooks/1436075887073431563/hZRpaFpCPxnvP1emNbvTs_D7MHXArN1nyS2YaVO6fKjdOX2ysiUtCUW-RRAZDJOP410z";
+const WEBHOOK_JUDGE  = "https://discord.com/api/webhooks/1436075887073431563/hZRpaFpCPxnvP1emNbvTs_D7MHXArN1nyS2YaVO6fKjdOX2ysiUtCUW-RRAZDJOP410z";
+const WEBHOOK_LAWYER = "https://discord.com/api/webhooks/1436075887073431563/hZRpaFpCPxnvP1emNbvTs_D7MHXArN1nyS2YaVO6fKjdOX2ysiUtCUW-RRAZDJOP410z";
+
+/* ========= Proxy لتجاوز CORS (CORS-Anywhere) ========= */
+const PROXY = "https://cors-anywhere.herokuapp.com/";
+
 /* ========= واجهة وتبويبات ========= */
 const tabs = document.querySelectorAll('header .tab');
 tabs.forEach(t=>{
