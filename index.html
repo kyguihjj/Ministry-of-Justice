@@ -4,88 +4,81 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>وزارة العدل - Falcon Town</title>
-
-<!-- favicon -->
 <link rel="icon" type="image/webp" href="logo.webp" />
-
 <style>
-  :root{
-    --brown:#2f1f18;
-    --brown-2:#412820;
-    --orange:#ff7a1a;
-    --bg-gradient: linear-gradient(180deg,var(--brown) 0%, #231815 100%);
-    --glass: rgba(255,255,255,0.03);
-    --card: rgba(255,255,255,0.03);
-    --text:#f4efe9;
-    --muted:#cdbdb0;
-    font-family: "Segoe UI", Tahoma, system-ui, sans-serif;
-    direction: rtl;
-  }
-  html,body{height:100%;margin:0;background: var(--bg-gradient); color:var(--text);}
-  .wrap{max-width:1100px;margin:20px auto;padding:20px;}
-  header{display:flex;align-items:center;gap:18px;padding:12px 18px;background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,0.6);}
-  .logo{width:86px;height:86px;border-radius:10px;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.03);}
-  .logo img{width:100%;height:100%;object-fit:cover;filter:drop-shadow(0 6px 18px rgba(0,0,0,0.6));}
-  header h1{font-size:26px;margin:0;letter-spacing:2px;}
-  header p{margin:0;color:var(--muted);font-size:13px;}
-  nav{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;}
-  .tab{padding:10px 14px;border-radius:10px;background:transparent;border:1px solid transparent;color:var(--text);cursor:pointer;transition:all .25s;box-shadow:0 4px 12px rgba(0,0,0,0.4);}
-  .tab:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,0.5);border-color:rgba(255,255,255,0.03);}
-  .tab.active{background:linear-gradient(90deg, rgba(255,122,26,0.12), rgba(255,122,26,0.06));border:1px solid rgba(255,122,26,0.12);}
-  main{margin-top:20px;display:grid;grid-template-columns: 1fr 360px;gap:18px;align-items:start;}
-  .card{background:var(--card);border-radius:14px;padding:18px;box-shadow:0 12px 40px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.02);}
-  .hero{padding:28px;border-radius:14px; background: linear-gradient(180deg, rgba(255,122,26,0.06), rgba(0,0,0,0.0));}
-  .section-title{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
-  .section-title h2{margin:0;font-size:18px;}
-  .muted{color:var(--muted);font-size:13px;}
-  .content{line-height:1.6;color:var(--text);}
-  label{display:block;margin-top:12px;font-weight:600;font-size:14px;}
-  input[type="text"], input[type="email"], textarea, select{
-    width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:rgba(0,0,0,0.25);color:var(--text);box-sizing:border-box;font-size:14px;margin-top:6px;
-  }
-  textarea{min-height:120px;resize:vertical;}
-  .btn{
-    display:inline-block;padding:10px 16px;border-radius:10px;background:linear-gradient(90deg,var(--orange), #ff9c4a);color:#fff;font-weight:700;border:none;cursor:pointer;margin-top:14px;box-shadow:0 10px 30px rgba(255,122,26,0.12);transition:transform .15s;
-  }
-  .btn:active{transform:translateY(2px) scale(.997);}
-  .side-hero{position:sticky;top:24px;}
-  .rules-list{list-style:none;padding:0;margin:0;}
-  .rules-list li{padding:10px;border-radius:8px;margin-bottom:8px;background:rgba(255,255,255,0.02);border:1px solid rgba(0,0,0,0.2);}
-  footer{margin-top:20px;text-align:center;color:var(--muted);font-size:13px;}
-  .fade-in{animation:fadeIn .8s ease both;}
-  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-  .welcome-overlay{
-    position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg, rgba(15,10,8,0.95), rgba(15,10,8,0.92));z-index:9999;backdrop-filter: blur(2px);
-  }
-  .welcome-box{width:90%;max-width:900px;padding:36px;border-radius:16px;text-align:center;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.015));box-shadow:0 30px 80px rgba(0,0,0,0.7);border:1px solid rgba(255,255,255,0.02);}
-  .welcome-box img{width:180px;margin-bottom:10px;}
-  .welcome-box h1{font-size:32px;margin:8px 0;color:var(--orange);letter-spacing:2px;}
-  .welcome-box p{color:var(--muted);margin:0 0 12px;}
-  .small-note{font-size:12px;color:var(--muted)}
-  .login-btn-small{
-    position:absolute;top:18px;left:18px;padding:8px 10px;border-radius:8px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.03);cursor:pointer;font-weight:700;color:var(--text);
-    transition:transform .12s; z-index:50;
-  }
-  .login-btn-small:hover{transform:translateY(-3px)}
-  .login-popup{
-    position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.45);z-index:9998;
-  }
-  .login-card{width:92%;max-width:420px;padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.015));box-shadow:0 20px 60px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.02);}
-  .news-card{margin-bottom:12px;padding:12px;border-radius:10px;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.02);}
-  .news-title{font-weight:800;margin-bottom:6px;color:#fff}
-  @media (max-width:960px){
-    main{grid-template-columns: 1fr; }
-    .side-hero{position:relative;top:0;}
-    .login-btn-small{left:12px;top:12px}
-  }
+:root{
+  --brown:#2f1f18;
+  --brown-2:#412820;
+  --orange:#ff7a1a;
+  --bg-gradient: linear-gradient(180deg,var(--brown) 0%, #231815 100%);
+  --glass: rgba(255,255,255,0.03);
+  --card: rgba(255,255,255,0.03);
+  --text:#f4efe9;
+  --muted:#cdbdb0;
+  font-family: "Segoe UI", Tahoma, system-ui, sans-serif;
+  direction: rtl;
+}
+html,body{height:100%;margin:0;background: var(--bg-gradient); color:var(--text);}
+.wrap{max-width:1100px;margin:20px auto;padding:20px;}
+header{display:flex;align-items:center;gap:18px;padding:12px 18px;background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,0.6);}
+.logo{width:86px;height:86px;border-radius:10px;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.03);}
+.logo img{width:100%;height:100%;object-fit:cover;filter:drop-shadow(0 6px 18px rgba(0,0,0,0.6));}
+header h1{font-size:26px;margin:0;letter-spacing:2px;}
+header p{margin:0;color:var(--muted);font-size:13px;}
+nav{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;}
+.tab{padding:10px 14px;border-radius:10px;background:transparent;border:1px solid transparent;color:var(--text);cursor:pointer;transition:all .25s;box-shadow:0 4px 12px rgba(0,0,0,0.4);}
+.tab:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,0.5);border-color:rgba(255,255,255,0.03);}
+.tab.active{background:linear-gradient(90deg, rgba(255,122,26,0.12), rgba(255,122,26,0.06));border:1px solid rgba(255,122,26,0.12);}
+main{margin-top:20px;display:grid;grid-template-columns: 1fr 360px;gap:18px;align-items:start;}
+.card{background:var(--card);border-radius:14px;padding:18px;box-shadow:0 12px 40px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.02);}
+.hero{padding:28px;border-radius:14px; background: linear-gradient(180deg, rgba(255,122,26,0.06), rgba(0,0,0,0.0));}
+.section-title{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.section-title h2{margin:0;font-size:18px;}
+.muted{color:var(--muted);font-size:13px;}
+.content{line-height:1.6;color:var(--text);}
+label{display:block;margin-top:12px;font-weight:600;font-size:14px;}
+input[type="text"], textarea, select{
+  width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:rgba(0,0,0,0.25);color:var(--text);box-sizing:border-box;font-size:14px;margin-top:6px;
+}
+textarea{min-height:120px;resize:vertical;}
+.btn{
+  display:inline-block;padding:10px 16px;border-radius:10px;background:linear-gradient(90deg,var(--orange), #ff9c4a);color:#fff;font-weight:700;border:none;cursor:pointer;margin-top:14px;box-shadow:0 10px 30px rgba(255,122,26,0.12);transition:transform .15s;
+}
+.btn:active{transform:translateY(2px) scale(.997);}
+.side-hero{position:sticky;top:24px;}
+.rules-list{list-style:none;padding:0;margin:0;}
+.rules-list li{padding:10px;border-radius:8px;margin-bottom:8px;background:rgba(255,255,255,0.02);border:1px solid rgba(0,0,0,0.2);}
+footer{margin-top:20px;text-align:center;color:var(--muted);font-size:13px;}
+.fade-in{animation:fadeIn .8s ease both;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.welcome-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg, rgba(15,10,8,0.95), rgba(15,10,8,0.92));z-index:9999;backdrop-filter: blur(2px);}
+.welcome-box{width:90%;max-width:900px;padding:36px;border-radius:16px;text-align:center;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.015));box-shadow:0 30px 80px rgba(0,0,0,0.7);border:1px solid rgba(255,255,255,0.02);}
+.welcome-box img{width:180px;margin-bottom:10px;}
+.welcome-box h1{font-size:32px;margin:8px 0;color:var(--orange);letter-spacing:2px;}
+.welcome-box p{color:var(--muted);margin:0 0 12px;}
+.small-note{font-size:12px;color:var(--muted)}
+.login-btn-small{
+  position:absolute;top:18px;left:18px;padding:8px 10px;border-radius:8px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.03);cursor:pointer;font-weight:700;color:var(--text);
+  transition:transform .12s; z-index:50;
+}
+.login-btn-small:hover{transform:translateY(-3px)}
+.login-popup{
+  position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.45);z-index:9998;
+}
+.login-card{width:92%;max-width:420px;padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.015));box-shadow:0 20px 60px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.02);}
+.news-card{margin-bottom:12px;padding:12px;border-radius:10px;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.02);}
+.news-title{font-weight:800;margin-bottom:6px;color:#fff}
+@media (max-width:960px){
+  main{grid-template-columns: 1fr; }
+  .side-hero{position:relative;top:0;}
+  .login-btn-small{left:12px;top:12px}
+}
 </style>
 </head>
 <body>
 
-<!-- زر تسجيل صغير -->
 <button id="openLogin" class="login-btn-small">سجل</button>
 
-<!-- شاشة ترحيب -->
 <div id="welcome" class="welcome-overlay">
   <div class="welcome-box fade-in">
     <img src="logo.webp" alt="Falcon Town Logo" />
@@ -98,7 +91,6 @@
   </div>
 </div>
 
-<!-- نافذة تسجيل الدخول -->
 <div id="loginPopup" class="login-popup" style="display:none;">
   <div class="login-card fade-in">
     <h3 style="margin:0 0 8px;">تسجيل دخول القضاة</h3>
@@ -113,268 +105,259 @@
 </div>
 
 <div class="wrap fade-in">
-  <header style="position:relative;">
-    <div class="logo"><img src="logo.webp" alt="logo"></div>
-    <div>
-      <h1>وزارة العدل - Falcon Town</h1>
-      <p>الهيبة، العدل، والقانون</p>
-      <nav style="margin-top:12px;">
-        <button class="tab active" data-target="rules-justice">قوانين العدل</button>
-        <button class="tab" data-target="rules-city">قوانين المدينة</button>
-        <button class="tab" data-target="raise-case">رفع قضية</button>
-        <button class="tab" data-target="apply-jobs">التقديم على وظائف</button>
-        <button class="tab" data-target="news-justice">أخبار العدل</button>
-      </nav>
+<header style="position:relative;">
+  <div class="logo"><img src="logo.webp" alt="logo"></div>
+  <div>
+    <h1>وزارة العدل - Falcon Town</h1>
+    <p>الهيبة، العدل، والقانون</p>
+    <nav style="margin-top:12px;">
+      <button class="tab active" data-target="rules-justice">قوانين العدل</button>
+      <button class="tab" data-target="rules-city">قوانين المدينة</button>
+      <button class="tab" data-target="raise-case">رفع قضية</button>
+      <button class="tab" data-target="apply-jobs">التقديم على وظائف</button>
+      <button class="tab" data-target="news-justice">أخبار العدل</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="card hero" id="content-area">
+  <!-- قوانين العدل -->
+  <div id="rules-justice" class="panel">
+    <div class="section-title"><h2>قوانين العدل</h2></div>
+    <div class="content muted">
+      <p>هنا تظهر القوانين والإجراءات القضائية داخل محاكم Falcon Town.</p>
     </div>
-  </header>
+  </div>
 
-  <main>
-    <section class="card hero" id="content-area">
-      <!-- قوانين العدل -->
-      <div id="rules-justice" class="panel">
-        <div class="section-title"><h2>قوانين العدل</h2></div>
-        <div class="content muted">
-          <p>هنا تظهر القوانين والإجراءات القضائية داخل محاكم Falcon Town. هذا النص تجريبي - استبدله بنصوص القوانين الحقيقية.</p>
-          <ol>
-            <li>الالتزام بالأدلة والإجراءات القانونية.</li>
-            <li>حفظ سرية الإجراءات والملفات ما لم يُقرر خلاف ذلك.</li>
-            <li>احترام قاضي المحكمة والالتزام بالنظام داخل قاعة المحكمة.</li>
-            <li>العقوبات تفرض وفقًا لطبيعة الجرم وإثباته.</li>
-          </ol>
-        </div>
+  <!-- قوانين المدينة -->
+  <div id="rules-city" class="panel" style="display:none;">
+    <div class="section-title"><h2>قوانين المدينة</h2></div>
+    <div class="content muted">
+      <ul>
+        <li>القيادة ضمن القانون</li>
+        <li>عدم الضرب العشوائي</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- رفع قضية -->
+  <div id="raise-case" class="panel" style="display:none;">
+    <div class="section-title"><h2>رفع قضية</h2></div>
+    <div class="content">
+      <form id="caseForm">
+        <label>يوزر ديسكورد</label>
+        <input type="text" name="user" placeholder="مثال: Player#1234" required>
+        <label>عنوان القضية</label>
+        <input type="text" name="title" placeholder="مثال: سرقة مركبة" required>
+        <label>تفاصيل/وصف</label>
+        <textarea name="description" placeholder="اكتب وصف الحادثة" required></textarea>
+        <button class="btn" type="submit">رفع القضية</button>
+        <div id="caseStatus" class="muted" style="margin-top:10px"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- التقديم على وظائف -->
+  <div id="apply-jobs" class="panel" style="display:none;">
+    <div class="section-title"><h2>التقديم على الوظائف</h2></div>
+    <div class="content">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
+        <button class="tab" data-target="apply-judge">تقديم - قاضي</button>
+        <button class="tab" data-target="apply-lawyer">تقديم - محامي</button>
       </div>
-
-      <!-- قوانين المدينة -->
-      <div id="rules-city" class="panel" style="display:none;">
-        <div class="section-title"><h2>قوانين المدينة</h2></div>
-        <div class="content muted">
-          <p>قوانين عامة لسكان المدينة واللاعبين:</p>
-          <ul>
-            <li>القيادة في نطاق القانون، لا استخدام سيارات بطريقة تضر الآخرين.</li>
-            <li>منع الضرب والقتل العشوائي داخل المناطق المدنية.</li>
-            <li>الاحترام المتبادل وعدم استخدام سب أو شتم داخل مناطق الخدمة العامة.</li>
-            <li>الالتزام بتوجيهات رجال الأمن عند الطلب.</li>
-          </ul>
-        </div>
+      <div id="apply-judge" class="job-panel">
+        <form id="judgeForm">
+          <label>يوزر ديسكورد</label><input type="text" name="user" required>
+          <label>الخبرة القضائية</label><textarea name="experience" required></textarea>
+          <label>لماذا تريد أن تكون قاضيًا؟</label><textarea name="motivation" required></textarea>
+          <button class="btn" type="submit">إرسال طلب القاضي</button>
+          <div id="judgeStatus" class="muted" style="margin-top:10px"></div>
+        </form>
       </div>
-
-      <!-- رفع قضية -->
-      <div id="raise-case" class="panel" style="display:none;">
-        <div class="section-title"><h2>رفع قضية</h2></div>
-        <div class="content">
-          <p class="muted">املأ النموذج أدناه لرفع قضية رسمية. سيتم إرسال التفاصيل إلى الجهات المختصة (Webhook).</p>
-          <form id="caseForm">
-            <label>يوزر ديسكورد</label>
-            <input type="text" name="user" placeholder="مثال: Player#1234" required>
-            <label>عنوان القضية</label>
-            <input type="text" name="title" placeholder="مثال: سرقة مركبة" required>
-            <label>تفاصيل/وصف</label>
-            <textarea name="description" placeholder="اكتب وصف الحادثة، الزمان، المكان، والشهود" required></textarea>
-            <label>روابط/أدلة (إن وُجدت)</label>
-            <input type="text" name="evidence" placeholder="رابط صورة أو فيديو أو لقطات">
-            <label>الموقع داخل المدينة</label>
-            <input type="text" name="location" placeholder="مثال: شارع السوق / منطقة الميناء">
-            <button class="btn" type="submit">رفع القضية</button>
-            <div id="caseStatus" class="muted" style="margin-top:10px"></div>
-          </form>
-        </div>
+      <div id="apply-lawyer" class="job-panel" style="display:none;">
+        <form id="lawyerForm">
+          <label>يوزر ديسكورد</label><input type="text" name="user" required>
+          <label>الخبرة السابقة</label><textarea name="experience" required></textarea>
+          <label>لماذا تريد أن تكون محاميًا؟</label><textarea name="motivation" required></textarea>
+          <button class="btn" type="submit">إرسال طلب المحامي</button>
+          <div id="lawyerStatus" class="muted" style="margin-top:10px"></div>
+        </form>
       </div>
+    </div>
+  </div>
 
-      <!-- التقديم على وظائف -->
-      <div id="apply-jobs" class="panel" style="display:none;">
-        <div class="section-title"><h2>التقديم على الوظائف</h2></div>
-        <div class="content">
-          <form id="jobForm">
-            <label>يوزر ديسكورد</label>
-            <input type="text" name="user" placeholder="مثال: Player#1234" required>
-            <label>اختر الوظيفة</label>
-            <select name="job">
-              <option value="قاضي">قاضي</option>
-              <option value="محامي">محامي</option>
-            </select>
-            <label>لماذا ترغب بهذه الوظيفة؟</label>
-            <textarea name="reason" placeholder="اكتب سبب تقديمك"></textarea>
-            <button class="btn" type="submit">إرسال الطلب</button>
-            <div id="jobStatus" class="muted" style="margin-top:10px"></div>
-          </form>
-        </div>
+  <!-- أخبار العدل -->
+  <div id="news-justice" class="panel" style="display:none;">
+    <div class="section-title"><h2>أخبار العدل</h2></div>
+    <div class="content">
+      <div id="newsControls" style="margin:12px 0; display:none;">
+        <button id="openAddNews" class="btn">إضافة خبر جديد</button>
+        <button id="logoutBtn" class="btn" style="background:transparent;border:1px solid rgba(255,255,255,0.06);margin-right:8px;">خروج</button>
       </div>
-
-      <!-- أخبار العدل -->
-      <div id="news-justice" class="panel" style="display:none;">
-        <div class="section-title"><h2>أخبار العدل</h2></div>
-        <div class="content">
-          <div id="newsFormContainer" style="display:none;">
-            <input id="newsTitle" type="text" placeholder="عنوان الخبر">
-            <textarea id="newsBody" placeholder="نص الخبر"></textarea>
-            <button id="postNewsBtn" class="btn">نشر الخبر</button>
-            <div id="postNewsMsg" class="muted"></div>
-          </div>
-          <div id="newsLoading">جاري تحميل الأخبار...</div>
-          <div id="newsList"></div>
-        </div>
+      <div id="addNewsForm" style="display:none; margin-top:12px;">
+        <input id="newsTitle" type="text" placeholder="عنوان الخبر"><br>
+        <textarea id="newsBody" placeholder="محتوى الخبر"></textarea>
+        <button id="postNewsBtn" class="btn">نشر الخبر</button>
+        <div id="postNewsMsg" class="muted" style="margin-top:6px"></div>
       </div>
-    </section>
+      <div id="newsList" style="margin-top:12px;"></div>
+    </div>
+  </div>
 
-    <aside class="side-hero card">
-      <div class="section-title"><h2>أخبار سريعة</h2></div>
-      <div class="content muted">يمكنك متابعة آخر الأخبار والإعلانات القضائية هنا مباشرة بعد تسجيل دخول القضاة.</div>
-    </aside>
-  </main>
-  <footer>صنع بواسطة كافح المكافح</footer>
-</div>
+</section>
 
-<!-- Firebase SDKs -->
+<aside class="side-hero card">
+  <div class="section-title"><h2>ملاحظات</h2></div>
+  <div class="content muted">
+    <p>كل البيانات يتم حفظها مباشرة على Firebase Realtime Database.</p>
+  </div>
+</aside>
+</main>
+
+<footer>
+صنع من المطور <strong>كافح المكافح</strong>
+</footer>
+
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.24.0/firebase-app.js";
-  import { getDatabase, ref, push, set, onValue, remove } from "https://www.gstatic.com/firebasejs/9.24.0/firebase-database.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.24.0/firebase-analytics.js";
+// Firebase
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-app.js";
+import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-database.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBAYndK896pdJWnuedqiuzhUrLkMwBkrIQ",
-    authDomain: "falcon-aa7b7.firebaseapp.com",
-    databaseURL: "https://falcon-aa7b7-default-rtdb.firebaseio.com",
-    projectId: "falcon-aa7b7",
-    storageBucket: "falcon-aa7b7.firebasestorage.app",
-    messagingSenderId: "841038084641",
-    appId: "1:841038084641:web:c242594a1673b7d7608160",
-    measurementId: "G-BMJFKRGNRX"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyBAYndK896pdJWnuedqiuzhUrLkMwBkrIQ",
+  authDomain: "falcon-aa7b7.firebaseapp.com",
+  databaseURL: "https://falcon-aa7b7-default-rtdb.firebaseio.com",
+  projectId: "falcon-aa7b7",
+  storageBucket: "falcon-aa7b7.appspot.com",
+  messagingSenderId: "841038084641",
+  appId: "1:841038084641:web:c242594a1673b7d7608160",
+  measurementId: "G-BMJFKRGNRX"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-  const db = getDatabase(app);
-
-  const newsRef = ref(db, 'news');
-  const newsList = document.getElementById('newsList');
-  const newsLoading = document.getElementById('newsLoading');
-
-  function renderNewsItem(key, data){
-    const el = document.createElement('div');
-    el.className = 'news-card';
-    el.innerHTML = `
-      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;">
-        <div>
-          <div class="news-title">${data.title}</div>
-          <div style="font-size:13px;color:#cdbdb0">${new Date(data.ts || Date.now()).toLocaleString('ar-EG')}</div>
-        </div>
-      </div>
-      <div style="margin-top:8px;color:#f4efe9;line-height:1.5">${data.body}</div>
-    `;
-    el.dataset.key = key;
-    if(localStorage.getItem('isJudge')){
-      const delBtn = document.createElement('button');
-      delBtn.textContent = 'حذف';
-      delBtn.className = 'btn';
-      delBtn.style.background='transparent';
-      delBtn.style.border='1px solid rgba(255,255,255,0.06)';
-      delBtn.style.marginTop='6px';
-      delBtn.onclick = async ()=>{
-        await remove(ref(db, 'news/' + key));
-      };
-      el.appendChild(delBtn);
-    }
-    return el;
-  }
-
-  onValue(newsRef, snapshot=>{
-    newsList.innerHTML = '';
-    const val = snapshot.val();
-    if(!val){ newsList.innerHTML = '<p class="muted">لا توجد أخبار حتى الآن.</p>'; return; }
-    Object.entries(val).sort((a,b)=> (b[1].ts||0)-(a[1].ts||0)).forEach(([key, data])=>{
-      newsList.appendChild(renderNewsItem(key, data));
-    });
-    newsLoading.style.display = 'none';
+// Tabs
+document.querySelectorAll('header .tab').forEach(tab=>{
+  tab.addEventListener('click', ()=> {
+    document.querySelectorAll('header .tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.panel').forEach(p=>p.style.display='none');
+    const target = document.getElementById(tab.dataset.target);
+    if(target) target.style.display='block';
   });
+});
 
-  document.getElementById('postNewsBtn').addEventListener('click', async ()=>{
-    const title = document.getElementById('newsTitle').value.trim();
-    const body = document.getElementById('newsBody').value.trim();
-    if(!title || !body){ document.getElementById('postNewsMsg').textContent = 'املأ العنوان والنص.'; return; }
-    const newRef = push(newsRef);
-    await set(newRef, { title, body, author: 'قاضي / نائب', ts: Date.now() });
-    document.getElementById('newsTitle').value = '';
-    document.getElementById('newsBody').value = '';
-    document.getElementById('postNewsMsg').textContent = 'تم نشر الخبر ✅';
+// Job panel tabs
+document.querySelectorAll('#apply-jobs .tab').forEach(tab=>{
+  tab.addEventListener('click', ()=> {
+    document.querySelectorAll('.job-panel').forEach(p=>p.style.display='none');
+    document.getElementById(tab.dataset.target).style.display='block';
   });
-</script>
+});
 
-<script>
-  // --- شاشة الترحيب ---
-  const welcome = document.getElementById('welcome');
-  document.getElementById('enterBtn').onclick = ()=>{ welcome.style.display='none'; }
+// Welcome
+document.getElementById('enterBtn').addEventListener('click', ()=>{
+  document.getElementById('welcome').style.display='none';
+});
 
-  // --- Tabs ---
-  const tabs = document.querySelectorAll('.tab');
-  const panels = document.querySelectorAll('.panel');
-  tabs.forEach(tab=>{
-    tab.onclick=()=>{
-      tabs.forEach(t=>t.classList.remove('active'));
-      tab.classList.add('active');
-      panels.forEach(p=>p.style.display='none');
-      const target = document.getElementById(tab.dataset.target);
-      if(target) target.style.display='block';
-    }
+// Login popup
+let isJudge=false;
+const loginPopup = document.getElementById('loginPopup');
+document.getElementById('openLogin').addEventListener('click', ()=>{loginPopup.style.display='flex';});
+document.getElementById('cancelLogin').addEventListener('click', ()=>{loginPopup.style.display='none';});
+document.getElementById('doLogin').addEventListener('click', ()=>{
+  const pw = document.getElementById('judgePassword').value.trim();
+  const msg = document.getElementById('loginMsg');
+  if(pw === "falcon123"){
+    isJudge = true;
+    msg.style.color='lightgreen';
+    msg.textContent = 'تم تسجيل الدخول ✅';
+    document.getElementById('newsControls').style.display='block';
+    loginPopup.style.display='none';
+  } else {
+    msg.style.color='#ffb3b3';
+    msg.textContent = 'كلمة السر خاطئة ❌';
+  }
+});
+
+// Logout
+document.getElementById('logoutBtn').addEventListener('click', ()=>{
+  isJudge=false;
+  document.getElementById('newsControls').style.display='none';
+  alert('تم تسجيل الخروج');
+});
+
+// Post news
+const postNewsBtn = document.getElementById('postNewsBtn');
+postNewsBtn.addEventListener('click', async (e)=>{
+  e.preventDefault();
+  const title = document.getElementById('newsTitle').value.trim();
+  const body = document.getElementById('newsBody').value.trim();
+  const postNewsMsg = document.getElementById('postNewsMsg');
+  if(!isJudge){ postNewsMsg.textContent = 'غير مسموح: سجل دخولك كقاضي'; return; }
+  if(!title || !body){ postNewsMsg.textContent = 'املأ العنوان والمحتوى'; return; }
+  postNewsMsg.textContent = 'جاري النشر...';
+  try{
+    const refItem = push(ref(db, 'news'));
+    await set(refItem,{title,body,author:'قاضي / نائب',ts:Date.now()});
+    postNewsMsg.style.color='lightgreen';
+    postNewsMsg.textContent='تم نشر الخبر ✅';
+    document.getElementById('newsTitle').value='';
+    document.getElementById('newsBody').value='';
+  }catch(err){
+    console.error(err);
+    postNewsMsg.style.color='#ffb3b3';
+    postNewsMsg.textContent='فشل النشر';
+  }
+});
+
+// Load news
+const newsList = document.getElementById('newsList');
+onValue(ref(db,'news'), snapshot=>{
+  newsList.innerHTML='';
+  const data = snapshot.val();
+  if(!data) return;
+  Object.values(data).sort((a,b)=>b.ts-a.ts).forEach(item=>{
+    const div = document.createElement('div');
+    div.className='news-card';
+    div.innerHTML=`<div class="news-title">${item.title}</div><div class="muted">${item.body}</div>`;
+    newsList.appendChild(div);
   });
+});
 
-  // --- تسجيل دخول القضاة ---
-  const loginPopup = document.getElementById('loginPopup');
-  const openLogin = document.getElementById('openLogin');
-  const cancelLogin = document.getElementById('cancelLogin');
-  const doLogin = document.getElementById('doLogin');
-  const loginMsg = document.getElementById('loginMsg');
+// Case form
+document.getElementById('caseForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const form = e.target;
+  const status = document.getElementById('caseStatus');
+  status.textContent='جاري رفع القضية...';
+  try{
+    const data = {user:form.user.value, title:form.title.value, description:form.description.value, ts:Date.now()};
+    await set(push(ref(db,'cases')), data);
+    status.style.color='lightgreen';
+    status.textContent='تم رفع القضية ✅';
+    form.reset();
+  }catch(err){status.style.color='#ffb3b3'; status.textContent='فشل رفع القضية'; console.error(err);}
+});
 
-  openLogin.onclick = ()=> loginPopup.style.display='flex';
-  cancelLogin.onclick = ()=> loginPopup.style.display='none';
+// Job forms
+document.getElementById('judgeForm').addEventListener('submit', async e=>{
+  e.preventDefault(); const f=e.target; const s=document.getElementById('judgeStatus');
+  try{ await set(push(ref(db,'jobApplications/judge')), {user:f.user.value, experience:f.experience.value, motivation:f.motivation.value, ts:Date.now()});
+  s.style.color='lightgreen'; s.textContent='تم إرسال الطلب ✅'; f.reset();
+  }catch(err){s.style.color='#ffb3b3'; s.textContent='فشل الإرسال'; console.error(err);}
+});
+document.getElementById('lawyerForm').addEventListener('submit', async e=>{
+  e.preventDefault(); const f=e.target; const s=document.getElementById('lawyerStatus');
+  try{ await set(push(ref(db,'jobApplications/lawyer')), {user:f.user.value, experience:f.experience.value, motivation:f.motivation.value, ts:Date.now()});
+  s.style.color='lightgreen'; s.textContent='تم إرسال الطلب ✅'; f.reset();
+  }catch(err){s.style.color='#ffb3b3'; s.textContent='فشل الإرسال'; console.error(err);}
+});
 
-  const JUDGE_PASSWORD = "falcon123"; // كلمة سر القضاة
+// Show add news form
+document.getElementById('openAddNews').addEventListener('click', ()=>{document.getElementById('addNewsForm').style.display='block';});
 
-  doLogin.onclick = ()=>{
-    const pw = document.getElementById('judgePassword').value.trim();
-    if(pw===JUDGE_PASSWORD){
-      localStorage.setItem('isJudge','1');
-      loginMsg.textContent = 'تم تسجيل الدخول كقاضٍ ✅';
-      document.getElementById('newsFormContainer').style.display='block';
-      setTimeout(()=>loginPopup.style.display='none',600);
-    } else loginMsg.textContent = 'كلمة السر خاطئة ❌';
-  }
-
-  // --- إرسال النماذج (Webhook) ---
-  document.getElementById('caseForm').onsubmit = async e=>{
-    e.preventDefault();
-    const f = e.target;
-    const payload = {
-      user: f.user.value,
-      title: f.title.value,
-      description: f.description.value,
-      evidence: f.evidence.value,
-      location: f.location.value
-    };
-    await fetch("https://discord.com/api/webhooks/WEBHOOK_CASE", {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({content: JSON.stringify(payload, null, 2)})
-    });
-    document.getElementById('caseStatus').textContent = 'تم رفع القضية ✅';
-    f.reset();
-  }
-
-  document.getElementById('jobForm').onsubmit = async e=>{
-    e.preventDefault();
-    const f = e.target;
-    const payload = {
-      user: f.user.value,
-      job: f.job.value,
-      reason: f.reason.value
-    };
-    await fetch("https://discord.com/api/webhooks/WEBHOOK_JOB", {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({content: JSON.stringify(payload, null, 2)})
-    });
-    document.getElementById('jobStatus').textContent = 'تم إرسال الطلب ✅';
-    f.reset();
-  }
 </script>
 </body>
 </html>
