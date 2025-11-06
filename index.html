@@ -247,6 +247,137 @@
 </div>
 
 <script>
+/* ========= إعداد Webhooks ========= */
+const WEBHOOK_CASE   = "https://discord.com/api/webhooks/1436075887073431563/hZRpaFpCPxnvP1emNbvTs_D7MHXArN1nyS2YaVO6fKjdOX2ysiUtCUW-RRAZDJOP410z";
+const WEBHOOK_JUDGE  = "https://discord.com/api/webhooks/1436075887073431563/hZRpaFpCPxnvP1emNbvTs_D7MHXArN1nyS2YaVO6fKjdOX2ysiUtCUW-RRAZDJOP410z";
+const WEBHOOK_LAWYER = "https://discord.com/api/webhooks/1436075887073431563/hZRpaFpCPxnvP1emNbvTs_D7MHXArN1nyS2YaVO6fKjdOX2ysiUtCUW-RRAZDJOP410z";
+
+/* ========= Proxy لتجاوز CORS (CORS-Anywhere) ========= */
+const PROXY = "https://cors-anywhere.herokuapp.com/";
+
+/* ========= واجهة وتبويبات ========= */
+const tabs = document.querySelectorAll('header .tab');
+tabs.forEach(t=>{
+  t.addEventListener('click', ()=>{
+    tabs.forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    const target = t.dataset.target;
+    document.querySelectorAll('#content-area .panel').forEach(p=> p.style.display = (p.id===target ? '' : 'none'));
+    microClick();
+  });
+});
+
+/* job tabs */
+document.querySelectorAll('.job-tab').forEach(j=>{
+  j.addEventListener('click', ()=>{
+    document.querySelectorAll('.job-tab').forEach(x=>x.classList.remove('active'));
+    j.classList.add('active');
+    const t = j.dataset.target;
+    document.querySelectorAll('.job-panel').forEach(p=> p.style.display = (p.id===t ? '' : 'none'));
+    microClick();
+  });
+});
+
+/* ========= Welcome overlay behavior (تم التصحيح هنا) ========= */
+const welcome = document.getElementById('welcome');
+const enterBtn = document.getElementById('enterBtn'); // تم تعريف الزر
+
+if(enterBtn){
+    enterBtn.addEventListener('click', ()=>{
+        if(!welcome) return;
+        
+        // استخدام الانتقال (Transition) لإخفاء العنصر بسلاسة
+        welcome.style.transition = 'opacity .6s ease-out';
+        welcome.style.opacity = 0;
+        
+        // إزالة العنصر بعد انتهاء الانتقال
+        setTimeout(()=> {
+            welcome.remove(); 
+        }, 600); 
+
+        bigTone();
+n" placeholder="مثال: شارع السوق">
+
+          <button class="btn" type="submit">رفع القضية</button>
+          <div id="caseStatus" class="muted" style="margin-top:10px"></div>
+        </form>
+      </div>
+
+      <div id="apply" class="panel" style="display:none">
+        <h2 class="underline">التقديم على وظائف</h2>
+        <p class="muted">اختر الوظيفة وعبئ النموذج</p>
+
+        <div class="tabs-row" style="margin-top:12px">
+          <button class="tab job-tab active" data-target="judgePanel">تقديم - قاضي</button>
+          <button class="tab job-tab" data-target="lawyerPanel">تقديم - محامي</button>
+        </div>
+
+        <div id="judgePanel" class="job-panel" style="margin-top:10px">
+          <form id="judgeForm">
+            <label>يوزر ديسكورد</label>
+            <input type="text" name="user" required>
+            <label>الاسم (اختياري)</label>
+            <input type="text" name="realname">
+            <label>الخبرة</label>
+            <textarea name="experience" required></textarea>
+            <label>لماذا تريد أن تكون قاضيًا؟</label>
+            <textarea name="motivation" required></textarea>
+            <button class="btn" type="submit">إرسال طلب القاضي</button>
+            <div id="judgeStatus" class="muted" style="margin-top:10px"></div>
+          </form>
+        </div>
+
+        <div id="lawyerPanel" class="job-panel" style="display:none;margin-top:10px">
+          <form id="lawyerForm">
+            <label>يوزر ديسكورد</label>
+            <input type="text" name="user" required>
+            <label>الاسم (اختياري)</label>
+            <input type="text" name="realname">
+            <label>الخبرة</label>
+            <textarea name="experience" required></textarea>
+            <label>لماذا تريد أن تكون محاميًا؟</label>
+            <textarea name="motivation" required></textarea>
+            <button class="btn" type="submit">إرسال طلب المحامي</button>
+            <div id="lawyerStatus" class="muted" style="margin-top:10px"></div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <aside class="card side-hero float-in" style="padding:18px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h3 style="margin:0">معلومات سريعة</h3>
+        <div style="font-size:12px;color:var(--muted)">Falcon Town</div>
+      </div>
+      <p class="muted" style="margin-top:8px">روابط هامة وإشعارات</p>
+      <ul class="rules-list" style="margin-top:12px">
+        <li>📜 الاستئناف متاح خلال 72 ساعة.</li>
+        <li>🕘 ساعات العمل: 08:00 - 20:00 (وقت السيرفر).</li>
+        <li>📢 للتواصل الطارئ: تواصل عبر قناة الإدارة بالديسكورد.</li>
+      </ul>
+
+      <div style="margin-top:16px">
+        <h4 style="margin:0 0 8px">أصوات ومؤثرات</h4>
+        <label style="display:flex;align-items:center;gap:8px;margin-top:8px;color:var(--muted)">
+          تشغيل الأصوات
+          <input id="soundToggle" type="checkbox" checked style="transform:scale(1.1)">
+        </label>
+      </div>
+
+      <div style="margin-top:18px">
+        <h4 style="margin:0 0 8px">روابط سريعة</h4>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+          <a class="btn" href="#" onclick="alert('فتح قناة الديسكورد')" style="text-decoration:none">الدخول للديسكورد</a>
+          <a class="btn" href="#" onclick="alert('قوانين السيرفر')" style="text-decoration:none">قوانين السيرفر</a>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <footer>صنع من المطور <strong>كافح المكافح</strong> — Falcon Town</footer>
+</div>
+
+<script>
 /* ========= إعداد Webhooks — استبدل بالروابط الحقيقية ========= 
    ملاحظة: لقد استخدمت نفس رابط الويب هوك لجميع النماذج. يفضل استخدام روابط مختلفة لفرز الرسائل.
 */
