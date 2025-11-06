@@ -139,10 +139,13 @@
 </div>
 
 <script>
+/* ==== إعداد الويب هوك ==== */
 const WEBHOOK_CASE   = "https://discord.com/api/webhooks/1436075887073431563/hZRpaFpCPxnvP1emNbvTs_D7MHXArN1nyS2YaVO6fKjdOX2ysiUtCUW-RRAZDJOP410z";
 const WEBHOOK_JUDGE  = WEBHOOK_CASE;
 const WEBHOOK_LAWYER = WEBHOOK_CASE;
-const PROXY = "https://api.cors.lol/?url="; // 🔥 البروكسي الجديد
+
+/* ==== البروكسي ==== */
+const PROXY = "https://falcon-proxy.vercel.app"; // 🔥 رابط Vercel Proxy
 
 /* ==== شاشة الترحيب ==== */
 window.addEventListener("load", () => {
@@ -189,22 +192,24 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-/* ==== إرسال النماذج ==== */
+/* ==== إرسال البيانات إلى البروكسي ==== */
 async function sendEmbedToWebhook(webhookUrl, embed, statusEl){
   statusEl.textContent = "جاري الإرسال...";
   try{
-    const res = await fetch(PROXY + webhookUrl, {
+    const res = await fetch(PROXY, {
       method:"POST",
       headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({embeds:[embed]})
+      body:JSON.stringify({url:webhookUrl, data:{embeds:[embed]}})
     });
-    if(!res.ok) throw new Error("فشل الاتصال بالويب هوك");
-    statusEl.textContent="✅ تم الإرسال بنجاح";
+    const result = await res.json();
+    if(!res.ok) throw new Error(result.error || "فشل الإرسال");
+    statusEl.textContent="✅ تم الإرسال بنجاح وظهر في الديسكورد";
   }catch(err){
     statusEl.textContent="❌ "+err.message;
   }
 }
 
+/* ==== رفع قضية ==== */
 document.getElementById("caseForm").addEventListener("submit",async e=>{
   e.preventDefault();
   const f=Object.fromEntries(new FormData(e.target).entries());
@@ -215,6 +220,7 @@ document.getElementById("caseForm").addEventListener("submit",async e=>{
   e.target.reset();
 });
 
+/* ==== تقديم القاضي ==== */
 document.getElementById("judgeForm").addEventListener("submit",async e=>{
   e.preventDefault();
   const f=Object.fromEntries(new FormData(e.target).entries());
@@ -225,6 +231,7 @@ document.getElementById("judgeForm").addEventListener("submit",async e=>{
   e.target.reset();
 });
 
+/* ==== تقديم المحامي ==== */
 document.getElementById("lawyerForm").addEventListener("submit",async e=>{
   e.preventDefault();
   const f=Object.fromEntries(new FormData(e.target).entries());
